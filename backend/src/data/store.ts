@@ -16,10 +16,27 @@ import type {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Locate project root data directory
-const projectRoot = path.resolve(__dirname, '../../../');
-const menuPath = path.join(projectRoot, 'data', 'menu.json');
-const tablesPath = path.join(projectRoot, 'data', 'tables.json');
+// Robust Data Path Finder for both local dev and serverless hosting (Vercel)
+function findDataPath(filename: string): string {
+  const candidates = [
+    path.resolve(process.cwd(), 'data', filename),
+    path.resolve(process.cwd(), 'backend', 'data', filename),
+    path.resolve(__dirname, '../../../data', filename),
+    path.resolve(__dirname, '../../data', filename),
+    path.resolve(__dirname, '../data', filename),
+    path.resolve(__dirname, 'data', filename),
+    path.resolve(__dirname, filename),
+  ];
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+  return path.resolve(process.cwd(), 'data', filename);
+}
+
+const menuPath = findDataPath('menu.json');
+const tablesPath = findDataPath('tables.json');
 const persistencePath = path.join(__dirname, 'db-state.json');
 
 function formatDisplayTime(date: Date = new Date()): string {

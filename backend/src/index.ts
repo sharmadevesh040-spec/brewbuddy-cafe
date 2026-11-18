@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -69,8 +70,23 @@ const aiRateLimiter = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-// Health Check
-app.get('/api/health', (_req, res) => {
+// Locate frontend production build directory if built
+const candidateDistPaths = [
+  path.resolve(process.cwd(), 'frontend/dist'),
+  path.resolve(process.cwd(), 'dist'),
+  path.resolve(__dirname, '../../frontend/dist'),
+  path.resolve(__dirname, '../../../frontend/dist'),
+  path.resolve(__dirname, '../frontend/dist'),
+];
+const frontendDist = candidateDistPaths.find((p) => fs.existsSync(path.join(p, 'index.html')));
+
+if (frontendDist) {
+  // Serve static assets (JS, CSS, images, icons, manifest)
+  app.use(express.static(frontendDist, { maxAge: '1h' }));
+}
+
+// Health Check (support both /api/health and /health)
+app.get(['/api/health', '/health'], (_req, res) => {
   res.json({
     status: 'ok',
     service: 'BrewBuddy Café Backend',
@@ -79,20 +95,54 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
-// Mount API Routers
-app.use('/api/menu', menuRouter);
-app.use('/api/tables', tablesRouter);
-app.use('/api/orders', ordersRouter);
-app.use('/api', aiRateLimiter, aiRouter);
-app.use('/api', staffRouter);
-app.use('/api/analytics', analyticsRouter);
-app.use('/api/events', eventsRouter);
+// API Directory & Discovery Root (support both /api and /api/)
+app.get(['/api', '/api/'], (_req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'BrewBuddy Café API',
+    version: '1.0.0',
+    documentation: 'https://github.com/sharmadevesh040-spec/brewbuddy-cafe',
+    endpoints: {
+      health: '/api/health',
+      menu: '/api/menu',
+      tables: '/api/tables',
+      orders: '/api/orders',
+      recommend: '/api/recommend',
+      staffRequests: '/api/staff/requests',
+      analytics: '/api/analytics',
+      events: '/api/events',
+    },
+  });
+});
 
-// 404 Handler
-app.use((_req, res) => {
+// Mount API Routers (supporting both /api/xxx and direct /xxx for proxy/serverless flexibility)
+app.use(['/api/menu', '/menu'], menuRouter);
+app.use(['/api/tables', '/tables'], tablesRouter);
+app.use(['/api/orders', '/orders'], ordersRouter);
+app.use(['/api', '/'], aiRateLimiter, aiRouter);
+app.use(['/api', '/'], staffRouter);
+app.use(['/api/analytics', '/analytics'], analyticsRouter);
+app.use(['/api/events', '/events'], eventsRouter);
+
+// Handler for Unrecognized Endpoints & SPA Client-Side Fallback
+app.use((req: Request, res: Response) => {
+  // If browser GET request and frontend exists, serve SPA
+  if (frontendDist && req.method === 'GET' && !req.path.startsWith('/api') && !req.path.startsWith('/events')) {
+    return res.sendFile(path.join(frontendDist, 'index.html'));
+  }
+
   res.status(404).json({
     error: 'Route not found',
-    message: 'The requested API endpoint does not exist on BrewBuddy server.',
+    message: `The requested API endpoint '${req.method} ${req.originalUrl}' does not exist on BrewBuddy server.`,
+    availableEndpoints: [
+      '/api/health',
+      '/api/menu',
+      '/api/tables',
+      '/api/orders',
+      '/api/recommend',
+      '/api/analytics',
+      '/api/events',
+    ],
   });
 });
 
@@ -106,8 +156,8 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   });
 });
 
-// Only listen when executed directly, not when imported during tests
-if (process.env.NODE_ENV !== 'test') {
+// Only listen when executed directly in Node, NOT in Vercel Serverless Function or Vitest
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`☕ BrewBuddy Café API server running on http://localhost:${PORT}`);
     console.log(`🤖 AI Barista Mode: ${process.env.GEMINI_API_KEY ? 'Gemini 2.5 Flash' : 'Grounded Semantic Engine'}`);
