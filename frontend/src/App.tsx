@@ -8,6 +8,7 @@ import { EventsProvider } from './context/EventsContext.js';
 
 import { Navbar } from './components/Navbar.js';
 import { Footer } from './components/Footer.js';
+import { PwaInstallPrompt } from './components/PwaInstallPrompt.js';
 
 import { HomePage } from './pages/HomePage.js';
 import { MenuPage } from './pages/MenuPage.js';
@@ -54,6 +55,7 @@ const AppLayout: React.FC = () => {
           <Route path="*" element={<HomePage />} />
         </Routes>
       </main>
+      <PwaInstallPrompt />
       {!isKds && <Footer />}
     </div>
   );

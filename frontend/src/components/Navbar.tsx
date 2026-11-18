@@ -14,6 +14,8 @@ import {
   FlaskConical,
   ChefHat,
   ChevronDown,
+  Download,
+  Smartphone,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext.js';
@@ -156,6 +158,19 @@ export const Navbar: React.FC = () => {
             >
               <QrCode className="w-3.5 h-3.5" />
               <span>{tableId ? `Table ${tableId}` : 'Scan Table'}</span>
+            </button>
+
+            {/* PWA Download Button */}
+            <button
+              onClick={() => {
+                sessionStorage.removeItem('bb_pwa_dismissed');
+                window.location.reload();
+              }}
+              className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#B77B4B]/10 hover:bg-[#B77B4B] text-[#B77B4B] hover:text-white border border-[#B77B4B]/20 transition-all"
+              title="Download BrewBuddy PWA App"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Install App</span>
             </button>
 
             {/* AI Barista CTA (Compact on desktop) */}
