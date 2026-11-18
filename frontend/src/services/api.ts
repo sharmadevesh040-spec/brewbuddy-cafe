@@ -11,11 +11,19 @@ import type {
   AnalyticsData,
 } from '../types/index.js';
 
+import fallbackMenuData from '../data/menu.json' with { type: 'json' };
+import fallbackTablesData from '../data/tables.json' with { type: 'json' };
+import fallbackCustomizationsData from '../data/customizations.json' with { type: 'json' };
+
 const API_BASE = '/api';
 
 async function handleResponse<T>(res: Response): Promise<T> {
-  if (!res.ok) {
+  const contentType = res.headers.get('content-type') || '';
+  if (!res.ok || contentType.includes('text/html')) {
     let errorMessage = `HTTP Error ${res.status}`;
+    if (contentType.includes('text/html')) {
+      throw new Error(`API endpoint returned HTML (${res.status}) instead of JSON.`);
+    }
     try {
       const data = await res.json();
       errorMessage = data.error || data.message || errorMessage;
@@ -27,7 +35,7 @@ async function handleResponse<T>(res: Response): Promise<T> {
   return res.json();
 }
 
-// Menu APIs
+// Menu APIs with graceful embedded fallback
 export async function getMenu(params?: {
   category?: string;
   search?: string;
@@ -36,35 +44,92 @@ export async function getMenu(params?: {
   temperature?: string;
   maxPrice?: number;
 }): Promise<{ count: number; items: MenuItem[] }> {
-  const query = new URLSearchParams();
-  if (params?.category) query.append('category', params.category);
-  if (params?.search) query.append('search', params.search);
-  if (params?.dietary) query.append('dietary', params.dietary);
-  if (params?.caffeine) query.append('caffeine', params.caffeine);
-  if (params?.temperature) query.append('temperature', params.temperature);
-  if (params?.maxPrice) query.append('maxPrice', params.maxPrice.toString());
+  try {
+    const query = new URLSearchParams();
+    if (params?.category) query.append('category', params.category);
+    if (params?.search) query.append('search', params.search);
+    if (params?.dietary) query.append('dietary', params.dietary);
+    if (params?.caffeine) query.append('caffeine', params.caffeine);
+    if (params?.temperature) query.append('temperature', params.temperature);
+    if (params?.maxPrice) query.append('maxPrice', params.maxPrice.toString());
 
-  const url = `${API_BASE}/menu${query.toString() ? `?${query.toString()}` : ''}`;
-  const res = await fetch(url);
-  return handleResponse(res);
+    const url = `${API_BASE}/menu${query.toString() ? `?${query.toString()}` : ''}`;
+    const res = await fetch(url);
+    return await handleResponse(res);
+  } catch (err) {
+    console.warn('[BrewBuddy API] Live menu fetch failed, utilizing embedded catalog:', err);
+    let items = ((fallbackMenuData as unknown) as MenuItem[]) || [];
+    if (params?.category && params.category !== 'All') {
+      items = items.filter((i) => i.category.toLowerCase() === params.category!.toLowerCase());
+    }
+    if (params?.search) {
+      const q = params.search.toLowerCase();
+      items = items.filter(
+        (i) =>
+          i.name.toLowerCase().includes(q) ||
+          i.description.toLowerCase().includes(q) ||
+          i.ingredients.some((ing) => ing.toLowerCase().includes(q))
+      );
+    }
+    if (params?.dietary) {
+      items = items.filter((i) => i.dietaryTags.some((t) => t.toLowerCase() === params.dietary!.toLowerCase()));
+    }
+    if (params?.caffeine) {
+      items = items.filter((i) => i.caffeine.toLowerCase() === params.caffeine!.toLowerCase());
+    }
+    if (params?.temperature) {
+      items = items.filter((i) => i.temperature.toLowerCase() === params.temperature!.toLowerCase());
+    }
+    if (params?.maxPrice) {
+      items = items.filter((i) => i.price <= params.maxPrice!);
+    }
+    return { count: items.length, items };
+  }
 }
 
 export async function getMenuItem(id: string): Promise<MenuItem> {
-  const res = await fetch(`${API_BASE}/menu/${id}`);
-  return handleResponse(res);
+  try {
+    const res = await fetch(`${API_BASE}/menu/${id}`);
+    return await handleResponse(res);
+  } catch (err) {
+    console.warn(`[BrewBuddy API] getMenuItem(${id}) fallback:`, err);
+    const item = ((fallbackMenuData as unknown) as MenuItem[]).find((i) => i.id === id);
+    if (item) return item;
+    throw new Error('Menu item not found');
+  }
 }
 
-// Table APIs
+// Table APIs with graceful embedded fallback
 export async function getTables(): Promise<{ count: number; tables: Table[] }> {
-  const res = await fetch(`${API_BASE}/tables`);
-  return handleResponse(res);
+  try {
+    const res = await fetch(`${API_BASE}/tables`);
+    return await handleResponse(res);
+  } catch (err) {
+    console.warn('[BrewBuddy API] Live tables fetch failed, utilizing embedded tables:', err);
+    const tables = ((fallbackTablesData as unknown) as Table[]) || [];
+    return { count: tables.length, tables };
+  }
 }
 
 export async function getTableDetails(
   id: string
 ): Promise<{ table: Table; activeOrders: Order[]; sessionOrders: Order[] }> {
-  const res = await fetch(`${API_BASE}/tables/${id}`);
-  return handleResponse(res);
+  try {
+    const res = await fetch(`${API_BASE}/tables/${id}`);
+    return await handleResponse(res);
+  } catch (err) {
+    console.warn(`[BrewBuddy API] getTableDetails(${id}) fallback:`, err);
+    const table =
+      ((fallbackTablesData as unknown) as Table[]).find((t) => t.id === id) || {
+        id,
+        number: parseInt(id, 10) || 1,
+        name: `Table ${id}`,
+        section: 'Indoor Lounge',
+        capacity: 4,
+        status: 'AVAILABLE' as TableStatus,
+      };
+    return { table, activeOrders: [], sessionOrders: [] };
+  }
 }
 
 export async function updateTableStatus(id: string, status: TableStatus): Promise<{ success: boolean; table: Table }> {

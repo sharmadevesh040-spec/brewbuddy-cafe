@@ -1,0 +1,22 @@
+[
+  { "id": "01", "number": 1, "name": "Table 01", "section": "Window View", "capacity": 2, "status": "AVAILABLE" },
+  { "id": "02", "number": 2, "name": "Table 02", "section": "Window View", "capacity": 2, "status": "AVAILABLE" },
+  { "id": "03", "number": 3, "name": "Table 03", "section": "Window View", "capacity": 2, "status": "AVAILABLE" },
+  { "id": "04", "number": 4, "name": "Table 04", "section": "Indoor Lounge", "capacity": 4, "status": "AVAILABLE" },
+  { "id": "05", "number": 5, "name": "Table 05", "section": "Indoor Lounge", "capacity": 4, "status": "AVAILABLE" },
+  { "id": "06", "number": 6, "name": "Table 06", "section": "Indoor Lounge", "capacity": 4, "status": "AVAILABLE" },
+  { "id": "07", "number": 7, "name": "Table 07", "section": "Indoor Lounge", "capacity": 6, "status": "AVAILABLE" },
+  { "id": "08", "number": 8, "name": "Table 08", "section": "Quiet Booth", "capacity": 4, "status": "AVAILABLE" },
+  { "id": "09", "number": 9, "name": "Table 09", "section": "Quiet Booth", "capacity": 4, "status": "AVAILABLE" },
+  { "id": "10", "number": 10, "name": "Table 10", "section": "Quiet Booth", "capacity": 2, "status": "AVAILABLE" },
+  { "id": "11", "number": 11, "name": "Table 11", "section": "Patio Garden", "capacity": 4, "status": "AVAILABLE" },
+  { "id": "12", "number": 12, "name": "Table 12", "section": "Patio Garden", "capacity": 4, "status": "AVAILABLE" },
+  { "id": "13", "number": 13, "name": "Table 13", "section": "Patio Garden", "capacity": 2, "status": "AVAILABLE" },
+  { "id": "14", "number": 14, "name": "Table 14", "section": "Patio Garden", "capacity": 6, "status": "AVAILABLE" },
+  { "id": "15", "number": 15, "name": "Table 15", "section": "Barista Counter", "capacity": 2, "status": "AVAILABLE" },
+  { "id": "16", "number": 16, "name": "Table 16", "section": "Barista Counter", "capacity": 2, "status": "AVAILABLE" },
+  { "id": "17", "number": 17, "name": "Table 17", "section": "Mezzanine Loft", "capacity": 4, "status": "AVAILABLE" },
+  { "id": "18", "number": 18, "name": "Table 18", "section": "Mezzanine Loft", "capacity": 4, "status": "AVAILABLE" },
+  { "id": "19", "number": 19, "name": "Table 19", "section": "Mezzanine Loft", "capacity": 6, "status": "AVAILABLE" },
+  { "id": "20", "number": 20, "name": "Table 20", "section": "Chef's Table", "capacity": 8, "status": "AVAILABLE" }
+]

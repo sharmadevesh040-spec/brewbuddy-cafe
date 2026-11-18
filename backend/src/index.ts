@@ -156,12 +156,4 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   });
 });
 
-// Only listen when executed directly in Node, NOT in Vercel Serverless Function or Vitest
-if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
-  app.listen(PORT, () => {
-    console.log(`☕ BrewBuddy Café API server running on http://localhost:${PORT}`);
-    console.log(`🤖 AI Barista Mode: ${process.env.GEMINI_API_KEY ? 'Gemini 2.5 Flash' : 'Grounded Semantic Engine'}`);
-  });
-}
-
 export default app;
