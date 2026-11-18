@@ -72,6 +72,10 @@ const aiRateLimiter = (req: Request, res: Response, next: NextFunction) => {
 
 // Locate frontend production build directory if built
 const candidateDistPaths = [
+  path.resolve(__dirname, 'public'),
+  path.resolve(__dirname, '../public'),
+  path.resolve(process.cwd(), 'backend/dist/public'),
+  path.resolve(process.cwd(), 'backend/public'),
   path.resolve(process.cwd(), 'frontend/dist'),
   path.resolve(process.cwd(), 'dist'),
   path.resolve(__dirname, '../../frontend/dist'),
@@ -84,6 +88,14 @@ if (frontendDist) {
   // Serve static assets (JS, CSS, images, icons, manifest)
   app.use(express.static(frontendDist, { maxAge: '1h' }));
 }
+
+// Serve SPA at root
+app.get('/', (_req, res, next) => {
+  if (frontendDist && fs.existsSync(path.join(frontendDist, 'index.html'))) {
+    return res.sendFile(path.join(frontendDist, 'index.html'));
+  }
+  next();
+});
 
 // Health Check (support both /api/health and /health)
 app.get(['/api/health', '/health'], (_req, res) => {
