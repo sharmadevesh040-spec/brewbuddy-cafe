@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+@theme {
+  --color-espresso: #2A201C;
+  --color-espresso-dark: #191210;
+  --color-oat: #F6F1E8;
+  --color-oat-dark: #2A2320;
+  --color-caramel: #B77B4B;
+  --color-caramel-hover: #9E6436;
+  --color-forest: #284C42;
+  --color-forest-dark: #1B352E;
+  --color-offwhite: #FFFCF7;
+
+  --font-serif: "Fraunces", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+@layer base {
+  :root {
+    --bg-primary: #FFFCF7;
+    --bg-secondary: #F6F1E8;
+    --text-primary: #2A201C;
+    --text-secondary: #6B5E57;
+    --border-color: #E8DFD5;
+  }
+
+  .dark {
+    --bg-primary: #15110F;
+    --bg-secondary: #221B18;
+    --text-primary: #F7F3ED;
+    --text-secondary: #C8BCB1;
+    --border-color: #382D27;
+  }
+
+  /* High contrast mode */
+  .high-contrast {
+    --bg-primary: #FFFFFF !important;
+    --bg-secondary: #EEEEEE !important;
+    --text-primary: #000000 !important;
+    --text-secondary: #111111 !important;
+    --border-color: #000000 !important;
+  }
+
+  .dark.high-contrast {
+    --bg-primary: #000000 !important;
+    --bg-secondary: #121212 !important;
+    --text-primary: #FFFFFF !important;
+    --text-secondary: #E0E0E0 !important;
+    --border-color: #FFFFFF !important;
+  }
+
+  /* Text scaling */
+  .text-size-lg {
+    font-size: 112.5%;
+  }
+
+  .text-size-xl {
+    font-size: 125%;
+  }
+
+  /* Reduced motion */
+  .reduce-motion *,
+  .reduce-motion *::before,
+  .reduce-motion *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+h1, h2, h3, .font-serif-heading {
+  font-family: var(--font-serif);
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: #B77B4B;
+  border-radius: 4px;
+}

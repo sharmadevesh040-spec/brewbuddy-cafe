@@ -1,0 +1,33 @@
+{
+  "name": "brewbuddy-cafe",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "BrewBuddy Café - AI-Powered Smart Café & QR Table Ordering System",
+  "main": "backend/src/index.ts",
+  "scripts": {
+    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,green\" \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "build": "npm --prefix backend run build && npm --prefix frontend run build",
+    "test": "npm --prefix backend test && npm --prefix frontend test",
+    "test:backend": "npm --prefix backend test",
+    "test:frontend": "npm --prefix frontend test",
+    "qr:generate": "node scripts/generate-qr.js"
+  },
+  "keywords": [
+    "cafe",
+    "qr-ordering",
+    "ai-barista",
+    "gemini",
+    "kitchen-display-system",
+    "kds",
+    "react",
+    "express"
+  ],
+  "author": "BrewBuddy Café Engineering Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^10.0.7",
+    "qrcode": "^1.5.4"
+  }
+}

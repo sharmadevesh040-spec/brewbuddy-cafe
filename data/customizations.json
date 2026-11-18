@@ -1,0 +1,45 @@
+{
+  "bases": [
+    { "id": "espresso", "name": "Double Shot Espresso", "basePrice": 140, "caffeine": "high" },
+    { "id": "cappuccino", "name": "Classic Cappuccino Base", "basePrice": 190, "caffeine": "high" },
+    { "id": "latte", "name": "Smooth Latte Base", "basePrice": 200, "caffeine": "medium" },
+    { "id": "cold-brew", "name": "18h Steeped Cold Brew", "basePrice": 210, "caffeine": "high" },
+    { "id": "matcha", "name": "Ceremonial Uji Matcha", "basePrice": 220, "caffeine": "low" },
+    { "id": "chai", "name": "Royal Spiced Chai", "basePrice": 120, "caffeine": "medium" }
+  ],
+  "milks": [
+    { "id": "whole-milk", "name": "Farm Fresh Whole Milk", "price": 0, "vegan": false },
+    { "id": "skim-milk", "name": "Skim Milk (Low Fat)", "price": 0, "vegan": false },
+    { "id": "oat-milk", "name": "Barista Oat Milk (Oatly)", "price": 40, "vegan": true },
+    { "id": "almond-milk", "name": "House Roasted Almond Milk", "price": 40, "vegan": true },
+    { "id": "soy-milk", "name": "Organic Soy Milk", "price": 30, "vegan": true },
+    { "id": "coconut-milk", "name": "Velvet Coconut Milk", "price": 40, "vegan": true },
+    { "id": "none", "name": "No Milk / Black", "price": 0, "vegan": true }
+  ],
+  "temperatures": [
+    { "id": "hot", "name": "Piping Hot (65°C)" },
+    { "id": "extra-hot", "name": "Extra Hot (75°C)" },
+    { "id": "iced", "name": "Over Ice (+₹10)", "price": 10 },
+    { "id": "blended", "name": "Blended Frappé (+₹30)", "price": 30 }
+  ],
+  "sweetness": [
+    { "id": "zero", "name": "Unsweetened (0%)" },
+    { "id": "light", "name": "Lightly Sweet (25%)" },
+    { "id": "regular", "name": "Standard Brew (50%)" },
+    { "id": "extra", "name": "Sweet Tooth (100%)" }
+  ],
+  "sizes": [
+    { "id": "regular", "name": "Regular (240ml)", "multiplier": 1.0, "priceAdd": 0 },
+    { "id": "large", "name": "Grande (350ml)", "multiplier": 1.25, "priceAdd": 40 },
+    { "id": "jumbo", "name": "Venti (480ml)", "multiplier": 1.5, "priceAdd": 70 }
+  ],
+  "extras": [
+    { "id": "extra-shot", "name": "Extra Single Espresso Shot", "price": 50 },
+    { "id": "madagascar-vanilla", "name": "Madagascar Vanilla Syrup", "price": 30 },
+    { "id": "caramel-drizzle", "name": "House Salted Caramel Drizzle", "price": 30 },
+    { "id": "hazelnut-praline", "name": "Hazelnut Praline Syrup", "price": 35 },
+    { "id": "cold-foam", "name": "Silky Cold Foam Crown", "price": 40 },
+    { "id": "whipped-cream", "name": "Fresh Vanilla Bean Whipped Cream", "price": 30 },
+    { "id": "cinnamon-dust", "name": "Ceylon Cinnamon Dusting", "price": 10 }
+  ]
+}
