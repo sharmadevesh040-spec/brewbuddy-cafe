@@ -32,7 +32,7 @@
     --border-color: #382D27;
   }
 
-  /* High contrast mode */
+  /* High contrast mode (class-based and automatic media query) */
   .high-contrast {
     --bg-primary: #FFFFFF !important;
     --bg-secondary: #EEEEEE !important;
@@ -47,6 +47,34 @@
     --text-primary: #FFFFFF !important;
     --text-secondary: #E0E0E0 !important;
     --border-color: #FFFFFF !important;
+  }
+
+  /* Automatic system high contrast fallback when standard-contrast is not forced */
+  @media (prefers-contrast: more), (forced-colors: active) {
+    :root:not(.standard-contrast) {
+      --bg-primary: #FFFFFF !important;
+      --bg-secondary: #EEEEEE !important;
+      --text-primary: #000000 !important;
+      --text-secondary: #111111 !important;
+      --border-color: #000000 !important;
+    }
+    .dark:not(.standard-contrast) {
+      --bg-primary: #000000 !important;
+      --bg-secondary: #121212 !important;
+      --text-primary: #FFFFFF !important;
+      --text-secondary: #E0E0E0 !important;
+      --border-color: #FFFFFF !important;
+    }
+    :root:not(.standard-contrast) button,
+    :root:not(.standard-contrast) input,
+    :root:not(.standard-contrast) select,
+    :root:not(.standard-contrast) textarea,
+    .high-contrast button,
+    .high-contrast input,
+    .high-contrast select,
+    .high-contrast textarea {
+      outline-color: currentColor;
+    }
   }
 
   /* Text scaling */

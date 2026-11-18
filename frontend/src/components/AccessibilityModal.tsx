@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Eye, Zap, Type, Sparkles } from 'lucide-react';
+import { X, Eye, Zap, Type, Sparkles, Check, Monitor } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext.js';
 
 interface AccessibilityModalProps {
@@ -14,7 +14,9 @@ export const AccessibilityModal: React.FC<AccessibilityModalProps> = ({ isOpen, 
     reducedMotion,
     setReducedMotion,
     highContrast,
-    setHighContrast,
+    contrastMode,
+    setContrastMode,
+    isSystemHighContrast,
     textSize,
     setTextSize,
   } = useTheme();
@@ -71,29 +73,75 @@ export const AccessibilityModal: React.FC<AccessibilityModalProps> = ({ isOpen, 
             </button>
           </div>
 
-          {/* High Contrast */}
-          <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)]">
-            <div className="flex items-center gap-3">
-              <Eye className="w-5 h-5 text-[#B77B4B]" />
-              <div>
-                <p className="text-sm font-semibold">High Contrast</p>
-                <p className="text-xs text-[var(--text-secondary)]">Maximum text legibility & borders</p>
+          {/* High Contrast Preference with Automatic Detection */}
+          <div className="p-3 rounded-xl bg-[var(--bg-secondary)] border border-[var(--border-color)] space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <Eye className="w-5 h-5 text-[#B77B4B]" />
+                <div>
+                  <p className="text-sm font-semibold">High Contrast</p>
+                  <p className="text-xs text-[var(--text-secondary)]">
+                    Maximum legibility and crisp borders
+                  </p>
+                </div>
               </div>
+              <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                highContrast ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-500'
+              }`}>
+                {highContrast ? 'Active' : 'Standard'}
+              </span>
             </div>
-            <button
-              onClick={() => setHighContrast(!highContrast)}
-              className={`w-12 h-6 rounded-full transition-colors relative flex items-center px-1 ${
-                highContrast ? 'bg-[#B77B4B]' : 'bg-neutral-300 dark:bg-neutral-700'
-              }`}
-              aria-label="Toggle high contrast"
-              aria-pressed={highContrast}
-            >
-              <div
-                className={`w-4 h-4 rounded-full bg-white transition-transform ${
-                  highContrast ? 'translate-x-6' : 'translate-x-0'
+
+            {/* Segmented Controller: Auto / On / Off */}
+            <div className="grid grid-cols-3 gap-2 pt-1">
+              <button
+                onClick={() => setContrastMode('auto')}
+                className={`py-2 px-2 text-xs font-semibold rounded-lg border transition-all flex flex-col items-center gap-0.5 ${
+                  contrastMode === 'auto'
+                    ? 'bg-[#B77B4B] text-white border-[#B77B4B] shadow-sm'
+                    : 'bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
                 }`}
-              />
-            </button>
+              >
+                <div className="flex items-center gap-1">
+                  <Monitor className="w-3 h-3" />
+                  <span>Automatic</span>
+                </div>
+                <span className="text-[9px] opacity-80">OS Match</span>
+              </button>
+
+              <button
+                onClick={() => setContrastMode('high')}
+                className={`py-2 px-2 text-xs font-semibold rounded-lg border transition-all flex flex-col items-center gap-0.5 ${
+                  contrastMode === 'high'
+                    ? 'bg-[#B77B4B] text-white border-[#B77B4B] shadow-sm'
+                    : 'bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                }`}
+              >
+                <span>Always On</span>
+                <span className="text-[9px] opacity-80">Enforced</span>
+              </button>
+
+              <button
+                onClick={() => setContrastMode('normal')}
+                className={`py-2 px-2 text-xs font-semibold rounded-lg border transition-all flex flex-col items-center gap-0.5 ${
+                  contrastMode === 'normal'
+                    ? 'bg-[#B77B4B] text-white border-[#B77B4B] shadow-sm'
+                    : 'bg-[var(--bg-primary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
+                }`}
+              >
+                <span>Standard</span>
+                <span className="text-[9px] opacity-80">Default Palette</span>
+              </button>
+            </div>
+
+            {contrastMode === 'auto' && (
+              <p className="text-[11px] text-[var(--text-secondary)] bg-[var(--bg-primary)] p-2 rounded-lg border border-[var(--border-color)]">
+                ℹ️ <strong>Automatic Mode Active:</strong> System contrast is currently{' '}
+                <strong className={isSystemHighContrast ? 'text-emerald-600' : 'text-[#B77B4B]'}>
+                  {isSystemHighContrast ? 'High Contrast (Detected)' : 'Standard'}
+                </strong>.
+              </p>
+            )}
           </div>
 
           {/* Reduced Motion */}
@@ -102,7 +150,7 @@ export const AccessibilityModal: React.FC<AccessibilityModalProps> = ({ isOpen, 
               <Zap className="w-5 h-5 text-[#B77B4B]" />
               <div>
                 <p className="text-sm font-semibold">Reduced Motion</p>
-                <p className="text-xs text-[var(--text-secondary)]">Disable transitions and entrance animations</p>
+                <p className="text-xs text-[var(--text-secondary)]">Disable transitions and animations</p>
               </div>
             </div>
             <button
